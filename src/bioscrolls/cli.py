@@ -135,33 +135,53 @@ def ingest(db_path: Path, start: int, end: int, per_year: int, non_english: int,
 def extract(db_path: Path, batch_docs: int, limit: int | None, redo: bool) -> None:
     """Run NER, normalisation and relation classification over ingested documents."""
     from bioscrolls.extraction import extract_documents, storage_rows
-    from bioscrolls.ner.predict import NerTagger
-    from bioscrolls.normalize.lexicon import lexicon_sources
-    from bioscrolls.normalize.normalizer import Normalizer, corpus_abbreviations
-    from bioscrolls.relation.predict import RelationClassifier
-    from bioscrolls.training_utils import pick_device
+    from bioscrolls.normalize.normalizer import corpus_abbreviations
+    from bioscrolls.runtime import load_pipeline
 
-    device = pick_device()
-    tagger = NerTagger.from_dir(config.NER_MODEL_DIR, device)
-    classifier = RelationClassifier.from_dir(config.RE_MODEL_DIR, device)
-    lexicon_sources()  # fail fast if vocabularies are missing
-
-    def factory(requests):
-        return Normalizer.build(lexicon_sources(), requests)
-
+    pipeline = load_pipeline()
     with open_store(db_path) as store:
         all_docs = store.documents()
         abbreviations = corpus_abbreviations(d.text for d in all_docs)
         todo = all_docs if redo else store.documents(only_unextracted=True)
         todo = todo[:limit] if limit else todo
-        click.echo(f"extracting {len(todo)} documents on {device}")
+        click.echo(f"extracting {len(todo)} documents on {pipeline.device}")
         for start in range(0, len(todo), batch_docs):
             batch = todo[start : start + batch_docs]
-            for result in extract_documents(batch, tagger, classifier, factory, abbreviations):
+            results = extract_documents(
+                batch, pipeline.tagger, pipeline.classifier, pipeline.normalizer_factory, abbreviations
+            )
+            for result in results:
                 store.save_extraction(result.pmid, result.scope, *storage_rows(result))
             store.conn.commit()
             click.echo(f"  {min(start + batch_docs, len(todo))}/{len(todo)}")
     click.echo("done")
+
+
+@main.command("evaluate-pipeline")
+@click.option("--split", type=click.Choice(config.BIORED_SPLITS), default="Test", show_default=True)
+@click.option("--min-confidence", type=click.FloatRange(0.0, 1.0), default=config.MIN_RELATION_CONFIDENCE)
+def evaluate_pipeline(split: str, min_confidence: float) -> None:
+    """End-to-end BioRED evaluation: predicted NER + normalisation + relations vs gold ids."""
+    from bioscrolls.corpora.biored import load_split
+    from bioscrolls.evaluation.end_to_end import as_documents, normalization_accuracy, pipeline_relation_metrics
+    from bioscrolls.extraction import extract_documents
+    from bioscrolls.runtime import load_pipeline
+    from bioscrolls.training_utils import write_json
+
+    pipeline = load_pipeline()
+    docs = load_split(split)
+    extractions = extract_documents(
+        as_documents(docs), pipeline.tagger, pipeline.classifier, pipeline.normalizer_factory
+    )
+    relations = pipeline_relation_metrics(docs, extractions, min_confidence)
+    results = {
+        "split": split,
+        "min_confidence": min_confidence,
+        "normalization_given_gold_spans": normalization_accuracy(docs, pipeline.normalizer_factory),
+        "relations_end_to_end": {k: v.as_dict() for k, v in relations.items()},
+    }
+    write_json(config.RESULTS_DIR / "pipeline_metrics.json", results)
+    click.echo(json.dumps(results, indent=2))
 
 
 @main.command("build-graph")

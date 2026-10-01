@@ -44,13 +44,12 @@ def candidate_keys(surface: str, abbreviations: Mapping[str, str]) -> list[str]:
 def corpus_abbreviations(texts: Iterable[str]) -> dict[str, str]:
     """Most frequent long form for each short form across a corpus."""
     votes: dict[str, Counter] = {}
-    for text in texts:
-        for short, long_form in find_abbreviations(text).items():
-            votes.setdefault(short, Counter())[normalize_key(long_form)] += 1
     surfaces: dict[tuple[str, str], str] = {}
     for text in texts:
         for short, long_form in find_abbreviations(text).items():
-            surfaces.setdefault((short, normalize_key(long_form)), long_form)
+            key = normalize_key(long_form)
+            votes.setdefault(short, Counter())[key] += 1
+            surfaces.setdefault((short, key), long_form)
     return {short: surfaces[(short, counts.most_common(1)[0][0])] for short, counts in votes.items()}
 
 
