@@ -1,0 +1,56 @@
+[project]
+name = "bioscrolls"
+version = "0.1.0"
+description = "Mine PubMed abstracts for neurological gene-disease-drug associations with fine-tuned BioBERT and build a time-indexed knowledge graph."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "click>=8.1",
+    "defusedxml>=0.7",
+    "networkx>=3.3",
+    "numpy>=1.26",
+    "requests>=2.32",
+    "torch>=2.4",
+    "transformers>=4.44",
+]
+
+[project.scripts]
+bioscrolls = "bioscrolls.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/bioscrolls"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["bioscrolls"]
+omit = [
+    "*/bioscrolls/ner/train.py",
+    "*/bioscrolls/relation/train.py",
+    "*/bioscrolls/training_utils.py",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S"]
+ignore = ["S101", "S311"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B", "E501"]

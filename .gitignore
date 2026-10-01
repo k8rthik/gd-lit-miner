@@ -39,3 +39,24 @@ Thumbs.db
 # Virtual environment #
 #######################
 .env/
+
+# Python #
+##########
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# BioScrolls artefacts (never commit data or weights) #
+#######################################################
+data/
+models/
+logs/
+exports/
+*.db
+*.safetensors
+*.bin
+*.pt
