@@ -5,6 +5,7 @@ import pytest
 from click.testing import CliRunner
 from graph_fixture import populate
 
+from bioscrolls import config
 from bioscrolls.cli import main
 
 
@@ -100,3 +101,63 @@ def test_extract_command_with_fake_pipeline(monkeypatch, tmp_path):
     with open_store(db) as store:
         assert store.count("relations") > 0
         assert store.documents(only_unextracted=True) == []
+
+
+def test_download_commands(monkeypatch, tmp_path):
+    from bioscrolls.corpora import biored
+    from bioscrolls.normalize import lexicon
+
+    monkeypatch.setattr(biored, "download_biored", lambda: tmp_path / "BioRED")
+    monkeypatch.setattr(lexicon, "download_lexicons", lambda: [tmp_path / "hgnc.txt"])
+    assert "BioRED" in run("download-corpus").output
+    assert "hgnc.txt" in run("download-lexicons").output
+
+
+def test_train_commands_pass_epoch_override(monkeypatch):
+    from bioscrolls.ner import train as ner_train
+    from bioscrolls.relation import train as re_train
+
+    seen = {}
+
+    def fake_ner(cfg):
+        seen["ner"] = cfg.epochs
+        return {"test": {"micro": {"f1": 0.5}}}
+
+    def fake_re(cfg):
+        seen["re"] = cfg.epochs
+        return {"test": {"model": {"sentence": {"typed": {"f1": 0.4}}}}}
+
+    monkeypatch.setattr(ner_train, "train_ner", fake_ner)
+    monkeypatch.setattr(re_train, "train_re", fake_re)
+    assert run("train-ner", "--epochs", 2).exit_code == 0
+    assert run("train-re").exit_code == 0
+    assert seen == {"ner": 2, "re": config.RE_TRAIN.epochs}
+
+
+def test_evaluate_pipeline_command(monkeypatch, tmp_path):
+    from test_extraction import DictTagger, FixedClassifier, factory
+
+    from bioscrolls import runtime
+    from bioscrolls.corpora import biored
+
+    gold = biored.AnnotatedDoc(
+        pmid="1",
+        title="APOE in Alzheimer's disease",
+        abstract="APOE is linked to Alzheimer's disease in these patients of the cohort.",
+        entities=(
+            biored.GoldEntity(0, 4, "APOE", "Gene", ("348",)),
+            biored.GoldEntity(8, 27, "Alzheimer's disease", "Disease", ("D000544",)),
+        ),
+        relations=(biored.GoldRelation("348", "D000544", "Association"),),
+    )
+    monkeypatch.setattr(biored, "load_split", lambda split, corpus_dir=None: [gold])
+    monkeypatch.setattr(
+        runtime, "load_pipeline", lambda: runtime.Pipeline(DictTagger(), FixedClassifier(), factory, "cpu")
+    )
+    monkeypatch.setattr(config, "RESULTS_DIR", tmp_path)
+    result = run("evaluate-pipeline", "--split", "Test")
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["relations_end_to_end"]["model"]["tp"] == 1
+    assert payload["normalization_given_gold_spans"]["overall"]["accuracy"] == 1.0
+    assert (tmp_path / "pipeline_metrics.json").exists()
