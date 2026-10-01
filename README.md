@@ -280,6 +280,15 @@ candidate pair, with the marked sentence as evidence). `edges`, `edge_years`,
 `entity_stats`, `entity_years`, `year_docs` are derived by `build-graph` and can
 be rebuilt at any confidence threshold without re-running the models.
 
+## Reproducing the numbers
+
+The three JSON files in `results/` are the raw output of the runs reported
+above, committed as provenance: `ner_metrics.json` (`train-ner`),
+`re_metrics.json` (`train-re`, including dev scores, per-label breakdowns and
+the baseline) and `pipeline_metrics.json` (`evaluate-pipeline`). Re-running
+those commands overwrites them. Seeds are fixed (`config.TrainConfig.seed`),
+but MPS kernels are not bit-reproducible, so expect ±1 F1 point.
+
 ## Citation
 
 BioRED: Luo L, Lai P-T, Wei C-H, Arighi CN, Lu Z. *BioRED: a rich biomedical

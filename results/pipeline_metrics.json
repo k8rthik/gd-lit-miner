@@ -1,0 +1,46 @@
+{
+  "min_confidence": 0.5,
+  "normalization_given_gold_spans": {
+    "overall": {
+      "accuracy": 0.6688974991194082,
+      "n": 2839,
+      "vocabulary_hit_rate": 0.7724550898203593
+    },
+    "per_type": {
+      "Chemical": {
+        "accuracy": 0.8617449664429531,
+        "n": 745,
+        "vocabulary_hit_rate": 0.8912751677852349
+      },
+      "Disease": {
+        "accuracy": 0.6735807860262009,
+        "n": 916,
+        "vocabulary_hit_rate": 0.7041484716157205
+      },
+      "Gene": {
+        "accuracy": 0.5432937181663837,
+        "n": 1178,
+        "vocabulary_hit_rate": 0.7504244482173175
+      }
+    }
+  },
+  "relations_end_to_end": {
+    "cooccurrence": {
+      "f1": 0.2340627973358706,
+      "fn": 386,
+      "fp": 1224,
+      "precision": 0.1673469387755102,
+      "recall": 0.38924050632911394,
+      "tp": 246
+    },
+    "model": {
+      "f1": 0.2747720364741642,
+      "fn": 406,
+      "fp": 787,
+      "precision": 0.22309970384995065,
+      "recall": 0.3575949367088608,
+      "tp": 226
+    }
+  },
+  "split": "Test"
+}
