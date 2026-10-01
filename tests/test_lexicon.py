@@ -57,6 +57,26 @@ def test_iter_ctd_reads_field_header(ctd_path):
     assert any(e.surface == "Idiopathic Parkinson Disease" and e.priority == 1 for e in entries)
 
 
+def test_iter_ctd_reads_split_synonym_columns(tmp_path):
+    """The CTD chemical report uses MESHSynonyms + CTDCuratedSynonyms, not Synonyms."""
+    raw = (
+        "# Fields:\n# ChemicalName\tChemicalID\tMESHSynonyms\tCTDCuratedSynonyms\n#\n"
+        "Levodopa\tMESH:D007980\tL-DOPA|L-Dopa\tlevodopa anhydrous\n"
+    )
+    path = tmp_path / "chem.tsv"
+    path.write_text(raw, encoding="utf-8")
+    entries = list(iter_ctd(path, id_field="ChemicalID", name_field="ChemicalName"))
+    assert {e.surface for e in entries} == {"Levodopa", "L-DOPA", "L-Dopa", "levodopa anhydrous"}
+    assert all(e.entity_id == "MESH:D007980" and e.name == "Levodopa" for e in entries)
+
+
+def test_iter_ctd_without_any_synonym_column_raises(tmp_path):
+    path = tmp_path / "chem.tsv"
+    path.write_text("# Fields:\n# ChemicalName\tChemicalID\n#\nX\tMESH:D1\n", encoding="utf-8")
+    with pytest.raises(LexiconFormatError, match="synonym"):
+        list(iter_ctd(path, id_field="ChemicalID", name_field="ChemicalName"))
+
+
 def test_iter_ctd_missing_header_raises(tmp_path):
     path = tmp_path / "bad.tsv"
     path.write_text("a\tb\n")

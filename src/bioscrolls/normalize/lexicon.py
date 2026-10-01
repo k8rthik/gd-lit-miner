@@ -24,6 +24,8 @@ _SINGULAR_PENALTY = 3  # singularised vocabulary keys rank below any exact key
 HGNC_FILE = "hgnc_complete_set.txt"
 CTD_DISEASES_FILE = "CTD_diseases.tsv.gz"
 CTD_CHEMICALS_FILE = "CTD_chemicals.tsv.gz"
+# CTD names its synonym column(s) differently per report.
+CTD_SYNONYM_FIELDS = ("Synonyms", "MESHSynonyms", "CTDCuratedSynonyms")
 
 
 class LexiconFormatError(ValueError):
@@ -89,11 +91,20 @@ def _ctd_header(handle) -> list[str]:
 
 
 def iter_ctd(path: Path, id_field: str, name_field: str) -> Iterator[LexiconEntry]:
+    """Yield the preferred name and every synonym for each CTD record.
+
+    The disease report calls its synonym column ``Synonyms``; the chemical
+    report splits them into ``MESHSynonyms`` and ``CTDCuratedSynonyms``. Any
+    of those present is used, and at least one must be.
+    """
     with _open_text(path) as handle:
         header = _ctd_header(handle)
         col = {name: i for i, name in enumerate(header)}
-        if not {id_field, name_field, "Synonyms"} <= col.keys():
-            raise LexiconFormatError(f"CTD file lacks {id_field}/{name_field}/Synonyms columns")
+        if not {id_field, name_field} <= col.keys():
+            raise LexiconFormatError(f"CTD file lacks {id_field}/{name_field} columns")
+        synonym_columns = [col[f] for f in CTD_SYNONYM_FIELDS if f in col]
+        if not synonym_columns:
+            raise LexiconFormatError(f"CTD file has none of the synonym columns {CTD_SYNONYM_FIELDS}")
         for line in handle:
             if line.startswith("#"):
                 continue
@@ -101,8 +112,9 @@ def iter_ctd(path: Path, id_field: str, name_field: str) -> Iterator[LexiconEntr
             row += [""] * (len(header) - len(row))
             name, entity_id = row[col[name_field]], row[col[id_field]]
             yield LexiconEntry(name, entity_id, name, PREFERRED)
-            for surface in _split_list(row[col["Synonyms"]]):
-                yield LexiconEntry(surface, entity_id, name, SYNONYM)
+            for index in synonym_columns:
+                for surface in _split_list(row[index]):
+                    yield LexiconEntry(surface, entity_id, name, SYNONYM)
 
 
 def build_index(entries: Iterable[LexiconEntry], wanted: set[str] | None = None) -> dict[str, tuple[str, str]]:
