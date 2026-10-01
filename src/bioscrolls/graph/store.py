@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sqlite3
 from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
@@ -18,7 +19,7 @@ CREATE TABLE IF NOT EXISTS documents (
     languages TEXT NOT NULL,
     journal TEXT,
     vernacular_title TEXT,
-    other_abstract_languages TEXT,
+    other_abstracts TEXT,         -- JSON [[language, text], ...]: stored, not NLP-processed
     query_label TEXT,
     nlp_scope TEXT,               -- 'title+abstract' | 'title' | 'none' (set by extract)
     extracted INTEGER NOT NULL DEFAULT 0
@@ -77,19 +78,19 @@ class Store:
                 ",".join(d.languages),
                 d.journal,
                 d.vernacular_title,
-                ",".join(lang for lang, _ in d.other_abstracts),
+                json.dumps([list(item) for item in d.other_abstracts], ensure_ascii=False),
                 d.query_label,
             )
             for d in documents
         ]
         self.conn.executemany(
             """INSERT INTO documents (pmid, title, abstract, year, languages, journal, vernacular_title,
-                   other_abstract_languages, query_label)
+                   other_abstracts, query_label)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                ON CONFLICT(pmid) DO UPDATE SET title=excluded.title, abstract=excluded.abstract,
                    year=excluded.year, languages=excluded.languages, journal=excluded.journal,
                    vernacular_title=excluded.vernacular_title,
-                   other_abstract_languages=excluded.other_abstract_languages""",
+                   other_abstracts=excluded.other_abstracts""",
             rows,
         )
         return len(rows)

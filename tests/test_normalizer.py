@@ -63,3 +63,4 @@ def test_corpus_abbreviations_majority_vote():
         "Alzheimer disease (AD) third.",
     ]
     assert corpus_abbreviations(texts)["AD"] == "Alzheimer disease"
+    assert corpus_abbreviations(iter(texts))["AD"] == "Alzheimer disease"  # single-pass iterables work

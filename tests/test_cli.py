@@ -1,4 +1,5 @@
 import json
+import re
 
 import pytest
 from click.testing import CliRunner
@@ -72,3 +73,30 @@ def test_ingest_uses_client(monkeypatch, tmp_path):
     result = run("ingest", "--db", db, "--start", 2020, "--end", 2020, "--per-year", 2, "--topic", "als")
     assert result.exit_code == 0, result.output
     assert "stored 2 documents (1 non-English" in result.output
+
+
+def test_build_graph_command(db):
+    result = run("build-graph", "--db", db, "--min-confidence", 0.95)
+    assert result.exit_code == 0, result.output
+    assert re.search(r"\bedges:\s+0\b", result.output)
+
+
+def test_extract_command_with_fake_pipeline(monkeypatch, tmp_path):
+    from test_extraction import DictTagger, FixedClassifier, factory
+
+    from bioscrolls import runtime
+    from bioscrolls.graph.store import open_store
+    from bioscrolls.models import Document
+
+    fake = runtime.Pipeline(DictTagger(), FixedClassifier(), factory, "cpu")
+    monkeypatch.setattr(runtime, "load_pipeline", lambda: fake)
+    db = tmp_path / "e.db"
+    abstract = "Alzheimer's disease (AD) is common. APOE is linked to AD in many cohorts of patients."
+    with open_store(db) as store:
+        store.upsert_documents([Document("1", "APOE in AD", abstract, 2020), Document("2", "AD", abstract, 2021)])
+    result = run("extract", "--db", db, "--batch-docs", 1)
+    assert result.exit_code == 0, result.output
+    assert "2/2" in result.output
+    with open_store(db) as store:
+        assert store.count("relations") > 0
+        assert store.documents(only_unextracted=True) == []
