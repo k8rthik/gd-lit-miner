@@ -195,7 +195,7 @@ abstract.
 Being specific, because this is easy to overstate:
 
 * The corpus deliberately includes **520 of 3,033 records (17%) whose article
-  language is not English** — 25 languages, led by Japanese (106), Chinese (88),
+  language is not English** — 22 languages, led by Japanese (106), Chinese (88),
   Russian (83), French (74), Polish (38), Spanish (36).
 * PubMed supplies an **English title and English abstract** for essentially all
   of them (NLM translates the title; the publisher usually supplies an English
