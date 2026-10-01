@@ -1,0 +1,85 @@
+15485686|t|A novel SCN5A mutation manifests as a malignant form of long QT syndrome with perinatal onset of tachycardia/bradycardia.
+15485686|a|OBJECTIVE: Congenital long QT syndrome (LQTS) with in utero onset of the rhythm disturbances is associated with a poor prognosis. In this study we investigated a newborn patient with fetal bradycardia, 2:1 atrioventricular block and ventricular tachycardia soon after birth. METHODS: Mutational analysis and DNA sequencing were conducted in a newborn. The 2:1 atrioventricular block improved to 1:1 conduction only after intravenous lidocaine infusion or a high dose of mexiletine, which also controlled the ventricular tachycardia. RESULTS: A novel, spontaneous LQTS-3 mutation was identified in the transmembrane segment 6 of domain IV of the Na(v)1.5 cardiac sodium channel, with a G-->A substitution at codon 1763, which changed a valine (GTG) to a methionine (ATG). The proband was heterozygous but the mutation was absent in the parents and the sister. Expression of this mutant channel in tsA201 mammalian cells by site-directed mutagenesis revealed a persistent tetrodotoxin-sensitive but lidocaine-resistant current that was associated with a positive shift of the steady-state inactivation curve, steeper activation curve and faster recovery from inactivation. We also found a similar electrophysiological profile for the neighboring V1764M mutant. But, the other neighboring I1762A mutant had no persistent current and was still associated with a positive shift of inactivation. CONCLUSIONS: These findings suggest that the Na(v)1.5/V1763M channel dysfunction and possible neighboring mutants contribute to a persistent inward current due to altered inactivation kinetics and clinically congenital LQTS with perinatal onset of arrhythmias that responded to lidocaine and mexiletine.
+15485686	8	13	SCN5A	GeneOrGeneProduct	6331
+15485686	56	72	long QT syndrome	DiseaseOrPhenotypicFeature	D008133
+15485686	97	108	tachycardia	DiseaseOrPhenotypicFeature	D013610
+15485686	109	120	bradycardia	DiseaseOrPhenotypicFeature	D001919
+15485686	144	160	long QT syndrome	DiseaseOrPhenotypicFeature	D008133
+15485686	162	166	LQTS	DiseaseOrPhenotypicFeature	D008133
+15485686	292	299	patient	OrganismTaxon	9606
+15485686	311	322	bradycardia	DiseaseOrPhenotypicFeature	D001919
+15485686	328	350	atrioventricular block	DiseaseOrPhenotypicFeature	D054537
+15485686	355	378	ventricular tachycardia	DiseaseOrPhenotypicFeature	D017180
+15485686	482	504	atrioventricular block	DiseaseOrPhenotypicFeature	D054537
+15485686	555	564	lidocaine	ChemicalEntity	D008012
+15485686	592	602	mexiletine	ChemicalEntity	D008801
+15485686	630	653	ventricular tachycardia	DiseaseOrPhenotypicFeature	D017180
+15485686	685	689	LQTS	DiseaseOrPhenotypicFeature	D008133
+15485686	767	775	Na(v)1.5	GeneOrGeneProduct	6331
+15485686	784	790	sodium	ChemicalEntity	D012964
+15485686	807	839	G-->A substitution at codon 1763	SequenceVariant	c|SUB|G|CODON1763|A
+15485686	857	891	valine (GTG) to a methionine (ATG)	SequenceVariant	p|SUB|V||M
+15485686	1018	1024	tsA201	CellLine	CVCL_2737
+15485686	1092	1104	tetrodotoxin	ChemicalEntity	D013779
+15485686	1119	1128	lidocaine	ChemicalEntity	D008012
+15485686	1366	1372	V1764M	SequenceVariant	p|SUB|V|1764|M
+15485686	1408	1414	I1762A	SequenceVariant	p|SUB|I|1762|A
+15485686	1557	1565	Na(v)1.5	GeneOrGeneProduct	6331
+15485686	1566	1572	V1763M	SequenceVariant	p|SUB|V|1763|M
+15485686	1731	1735	LQTS	DiseaseOrPhenotypicFeature	D008133
+15485686	1760	1771	arrhythmias	DiseaseOrPhenotypicFeature	D001145
+15485686	1790	1799	lidocaine	ChemicalEntity	D008012
+15485686	1804	1814	mexiletine	ChemicalEntity	D008801
+15485686	Association	D001919	6331	Novel
+15485686	Positive_Correlation	D001919	p|SUB|V|1763|M	Novel
+15485686	Association	D013610	6331	Novel
+15485686	Positive_Correlation	D013610	p|SUB|V|1763|M	Novel
+15485686	Association	6331	D001145	Novel
+15485686	Negative_Correlation	D001145	D008801	No
+15485686	Negative_Correlation	D001145	D008012	No
+15485686	Positive_Correlation	p|SUB|V|1763|M	D001145	Novel
+15485686	Positive_Correlation	p|SUB|V|1763|M	D008133	Novel
+15485686	Association	D008133	6331	Novel
+15485686	Association	D008133	p|SUB|V||M	Novel
+15485686	Association	D008133	c|SUB|G|CODON1763|A	Novel
+15485686	Negative_Correlation	D008133	D008801	No
+15485686	Negative_Correlation	D008133	D008012	No
+15485686	Negative_Correlation	D008801	D017180	No
+15485686	Negative_Correlation	D008012	D017180	No
+15485686	Negative_Correlation	D054537	D008801	No
+15485686	Negative_Correlation	D054537	D008012	No
+
+16046395|t|Allelic expression imbalance of human mu opioid receptor (OPRM1) caused by variant A118G.
+16046395|a|As a primary target for opioid drugs and peptides, the mu opioid receptor (OPRM1) plays a key role in pain perception and addiction. Genetic variants of OPRM1 have been implicated in predisposition to drug addiction, in particular the single nucleotide polymorphism A118G, leading to an N40D substitution, with an allele frequency of 10-32%, and uncertain functions. We have measured allele-specific mRNA expression of OPRM1 in human autopsy brain tissues, using A118G as a marker. In 8 heterozygous samples measured, the A118 mRNA allele was 1.5-2.5-fold more abundant than the G118 allele. Transfection into Chinese hamster ovary cells of a cDNA representing only the coding region of OPRM1, carrying adenosine, guanosine, cytidine, and thymidine in position 118, resulted in 1.5-fold lower mRNA levels only for OPRM1-G118, and more than 10-fold lower OPRM1 protein levels, measured by Western blotting and receptor binding assay. After transfection and inhibition of transcription with actinomycin D, analysis of mRNA turnover failed to reveal differences in mRNA stability between A118 and G118 alleles, indicating a defect in transcription or mRNA maturation. These results indicate that OPRM1-G118 is a functional variant with deleterious effects on both mRNA and protein yield. Clarifying the functional relevance of polymorphisms associated with susceptibility to a complex disorder such as drug addiction provides a foundation for clinical association studies.
+16046395	32	37	human	OrganismTaxon	9606
+16046395	38	56	mu opioid receptor	GeneOrGeneProduct	4988
+16046395	58	63	OPRM1	GeneOrGeneProduct	4988
+16046395	83	88	A118G	SequenceVariant	rs1799971
+16046395	145	163	mu opioid receptor	GeneOrGeneProduct	4988
+16046395	165	170	OPRM1	GeneOrGeneProduct	4988
+16046395	192	196	pain	DiseaseOrPhenotypicFeature	D010146
+16046395	243	248	OPRM1	GeneOrGeneProduct	4988
+16046395	291	305	drug addiction	DiseaseOrPhenotypicFeature	D019966
+16046395	356	361	A118G	SequenceVariant	rs1799971
+16046395	377	381	N40D	SequenceVariant	rs1799971
+16046395	509	514	OPRM1	GeneOrGeneProduct	4988
+16046395	518	523	human	OrganismTaxon	9606
+16046395	553	558	A118G	SequenceVariant	rs1799971
+16046395	612	616	A118	SequenceVariant	rs1799971
+16046395	669	673	G118	SequenceVariant	rs1799971
+16046395	700	715	Chinese hamster	OrganismTaxon	10029
+16046395	777	782	OPRM1	GeneOrGeneProduct	100770962
+16046395	793	854	adenosine, guanosine, cytidine, and thymidine in position 118	SequenceVariant	rs1799971
+16046395	904	909	OPRM1	GeneOrGeneProduct	100770962
+16046395	910	914	G118	SequenceVariant	rs1799971
+16046395	944	949	OPRM1	GeneOrGeneProduct	100770962
+16046395	1079	1092	actinomycin D	ChemicalEntity	D003609
+16046395	1175	1179	A118	SequenceVariant	rs1799971
+16046395	1184	1188	G118	SequenceVariant	rs1799971
+16046395	1283	1288	OPRM1	GeneOrGeneProduct	100770962
+16046395	1289	1293	G118	SequenceVariant	rs1799971
+16046395	1489	1503	drug addiction	DiseaseOrPhenotypicFeature	D019966
+16046395	Association	4988	D010146	No
+16046395	Association	4988	D019966	No
+16046395	Association	D019966	rs1799971	Novel
+
